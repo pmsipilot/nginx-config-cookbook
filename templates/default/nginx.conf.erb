@@ -1,0 +1,23 @@
+<% node['nginx']['servers'].each do |name, server| %>
+
+<% server['upstreams'].each do |upname, upstream| %>
+upstream <%= upname %> {
+    server <%= upstream['ip'] %>:<%= upstream['port'] %>;
+}
+<% end %>
+
+server {
+    listen *:<%= server['port'] %>;
+    server_name <%= name %>;
+    server_tokens off;
+
+    <% server['locations'].each do |location| %>
+    location <%= location['path'] %> {
+        proxy_pass http://<%= location['upstream'] %><%= location['alias'] %>/;
+        proxy_redirect http://<%= location['upstream'] %><%= location['alias'] %>/ <%= location['alias'] %>/;
+        proxy_set_header Host $proxy_host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+    <% end %>
+}
+<% end %>
