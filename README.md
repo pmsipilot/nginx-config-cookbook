@@ -1,27 +1,39 @@
 # nginx-config-cookbook
 
-TODO: Enter the cookbook description here.
+Configures nginx
 
 ## Supported Platforms
 
-TODO: List your supported platforms.
+* CentOS 6.5
 
 ## Attributes
 
-<table>
-  <tr>
-    <th>Key</th>
-    <th>Type</th>
-    <th>Description</th>
-    <th>Default</th>
-  </tr>
-  <tr>
-    <td><tt>['nginx-config']['bacon']</tt></td>
-    <td>Boolean</td>
-    <td>whether to include bacon</td>
-    <td><tt>true</tt></td>
-  </tr>
-</table>
+| Key         | Type       | Default | Description                                           |
+| :---------- |:---------- | :------ | :---------------------------------------------------- |
+| `servers`   | Hash       | `{}`    | A list of servers with names as key                   |
+
+### Servers
+
+| Key         | Type       | Default | Description                                           |
+| :---------- |:---------- | :------ | :---------------------------------------------------- |
+| `port`      | Integer    | `80`    | The port to listen on                                 |
+| `upstreams` | Hash       | `{}`    | A list of [upstreams](#upstreams) with names as key   |
+| `locations` | Array      | `[]`    | A list of [locations](#locations) definitions         |
+
+### Upstreams
+
+| Key         | Type       | Default | Description                                           |
+| :---------- |:---------- | :------ | :---------------------------------------------------- |
+| `ip`        | String     | `nil`   | The IP of the upstream server                         |
+| `port`      | Integer    | `80`    | The port of the upstream server                       |
+
+### Locations
+
+| Key         | Type       | Default | Description                                           |
+| :---------- |:---------- | :------ | :---------------------------------------------------- |
+| `path`      | String     | `nil`   | The location path                                     |
+| `alias`     | String     | `nil`   | The location alias                                    |
+| `upstream`  | String     | `nil`   | Name of an existing [upstream](#upstreams)            |
 
 ## Usage
 
@@ -32,11 +44,7 @@ Include `nginx-config` in your node's `run_list`:
 ```json
 {
   "run_list": [
-    "recipe[nginx-config::default]"
+    "recipe[nginx-config]"
   ]
 }
 ```
-
-## License and Authors
-
-Author:: YOUR_NAME (<YOUR_EMAIL>)
