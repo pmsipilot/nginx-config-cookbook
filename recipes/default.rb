@@ -12,6 +12,14 @@ node['nginx']['servers'].each do |server_name, server|
     raise Chef::Exceptions::ConfigurationError, 'Invalid server configuration'
   end
 
+  if server.key?('locations') and not server['locations'].empty?
+    server['locations'].each do |location|
+      has_path = (location.key?('path') and not location['path'].empty?)
+      has_upstream = (location.key?('upstream') and not location['upstream'].empty?)
+
+      raise Chef::Exceptions::ConfigurationError, 'Invalid location configuration' unless has_path and has_upstream
+    end
+  end
 
   template 'configure_server' do
     source 'nginx.conf.erb'

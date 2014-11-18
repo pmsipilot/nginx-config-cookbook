@@ -10,7 +10,7 @@ server {
     server_tokens off;
 <% if @server['root'] %>    root <%= @server['root'] %>;<% end %>
 
-    <% @server['locations'].each do |location_def| %>
+<% @server['locations'].each do |location_def| %>
     location <%= location_def['path'] %> {
         proxy_pass http://<%= location_def['upstream'] %><%= location_def['alias'] %>/;
         proxy_redirect http://<%= location_def['upstream'] %><%= location_def['alias'] %>/ <%= location_def['alias'] %>/;
@@ -18,5 +18,5 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
     }
 
-    <% end if @server['locations'] %>
+<% end if @server['locations'] %>
 }
