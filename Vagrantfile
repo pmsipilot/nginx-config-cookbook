@@ -15,11 +15,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.berkshelf.enabled = true
   config.berkshelf.berksfile_path = 'Berksfile'
 
+  config.vm.provider 'virtualbox' do |vbox|
+    vbox.customize ['modifyvm', :id, '--memory', 4096]
+    vbox.customize ['modifyvm', :id, '--cpus', 2]
+  end
+
   config.vm.provision :chef_solo do |chef|
     chef.json = {
       nginx: {
         :servers => {
-          'sugar.pmsipilot.com' => {
+          :'sugar.pmsipilot.com' => {
             :port => 8888,
             :upstreams => {
               :sugar => {
