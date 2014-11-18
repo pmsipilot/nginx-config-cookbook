@@ -21,18 +21,18 @@ node['nginx']['servers'].each do |server_name, server|
     end
   end
 
-  template 'configure_server' do
+  template "configure_server_#{server_name}" do
     source 'nginx.conf.erb'
     path "/etc/nginx/sites-available/#{server_name}.conf"
     variables server: server, server_name: server_name
 
-    notifies :create, 'link[enable_server]', :immediately
+    notifies :create, "link[enable_server_#{server_name}]", :immediately
     notifies :restart, 'service[nginx]', :delayed
   end
 
-  link 'enable_server' do
-    target_file '/etc/nginx/sites-enabled/proxy.conf'
-    to '/etc/nginx/sites-available/proxy.conf'
+  link "enable_server_#{server_name}" do
+    target_file "/etc/nginx/sites-enabled/#{server_name}.conf"
+    to "/etc/nginx/sites-available/#{server_name}.conf"
     action :nothing
 
     notifies :restart, 'service[nginx]', :delayed

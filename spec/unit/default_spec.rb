@@ -50,7 +50,7 @@ describe 'nginx-config::default' do
     end
 
     it 'Declares server link resource and does nothing' do
-      link = chef_run.converge(described_recipe).link('enable_server')
+      link = chef_run.converge(described_recipe).link('enable_server_foo')
 
       expect(link).to do_nothing
     end

@@ -31,7 +31,7 @@ describe 'nginx-config::default' do
         end
     end
 
-    describe 'Single upstream' do
+    describe 'Single location' do
       before do
         chef_run.node.set['nginx']['servers']['foo']['locations'] << {
             :path => '/',
