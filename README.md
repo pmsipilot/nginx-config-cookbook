@@ -17,6 +17,7 @@ Configures nginx
 | Key         | Type       | Default | Description                                           |
 | :---------- |:---------- | :------ | :---------------------------------------------------- |
 | `port`      | Integer    | `80`    | The port to listen on                                 |
+| `root`      | String     | `nil`   | The server's document root                            |
 | `upstreams` | Hash       | `{}`    | A list of [upstreams](#upstreams) with names as key   |
 | `locations` | Array      | `[]`    | A list of [locations](#locations) definitions         |
 

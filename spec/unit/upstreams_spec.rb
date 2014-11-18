@@ -32,6 +32,7 @@ server {
     server_name foo;
     server_tokens off;
 
+
 }
 CONF
 
@@ -88,6 +89,7 @@ server {
     listen *:8888;
     server_name foo;
     server_tokens off;
+
 
 }
 CONF

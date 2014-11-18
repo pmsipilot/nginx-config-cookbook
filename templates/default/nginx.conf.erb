@@ -8,6 +8,7 @@ server {
     listen *:<%= @server['port'] %>;
     server_name <%= @server_name %>;
     server_tokens off;
+<% if @server['root'] %>    root <%= @server['root'] %>;<% end %>
 
     <% @server['locations'].each do |location_def| %>
     location <%= location_def['path'] %> {
