@@ -13,6 +13,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = 'chef/centos-6.5'
 
   config.berkshelf.enabled = true
+  config.berkshelf.berksfile_path = 'Berksfile'
 
   config.vm.provision :chef_solo do |chef|
     chef.json = {
