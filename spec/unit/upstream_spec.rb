@@ -5,6 +5,8 @@ describe 'nginx-config::default' do
     let(:chef_run) do
       ChefSpec::SoloRunner.new do |node|
         node.set['nginx'] = {
+            :sites_available => '/etc/nginx/sites-available',
+            :sites_enabled => '/etc/nginx/sites-enabled',
             :servers => {
                 :foo => {
                     :port => 8888,

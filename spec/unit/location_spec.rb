@@ -57,7 +57,7 @@ server {
 }
 CONF
 
-        expect(chef_run.converge(described_recipe)).to render_file('/etc/nginx/sites-available/foo.conf').with_content(expected)
+        expect(chef_run.converge(described_recipe)).to render_file('/etc/nginx/conf.d/foo.conf').with_content(expected)
       end
     end
 
@@ -99,7 +99,7 @@ server {
 }
 CONF
 
-        expect(chef_run.converge(described_recipe)).to render_file('/etc/nginx/sites-available/foo.conf').with_content(expected)
+        expect(chef_run.converge(described_recipe)).to render_file('/etc/nginx/conf.d/foo.conf').with_content(expected)
       end
     end
   end

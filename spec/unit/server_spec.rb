@@ -5,6 +5,8 @@ describe 'nginx-config::default' do
     let(:chef_run) do
       ChefSpec::SoloRunner.new do |node|
         node.set['nginx'] = {
+            :sites_available => '/etc/nginx/sites-available',
+            :sites_enabled => '/etc/nginx/sites-enabled',
             :servers => {}
         }
       end
@@ -38,7 +40,7 @@ CONF
         template = chef_run.template('/etc/nginx/sites-available/foo.conf')
         link = chef_run.link('/etc/nginx/sites-enabled/foo.conf')
 
-        expect(template).to notify('link[enable_server_foo]').to(:create).immediately
+        expect(template).to notify('link[link_server_foo]').to(:create).immediately
         expect(link.to).to eq('/etc/nginx/sites-available/foo.conf')
         ChefSpec::Coverage.cover!(link)
       end
@@ -100,11 +102,11 @@ CONF
         template_bar = chef_run.template('/etc/nginx/sites-available/bar.conf')
         link_bar = chef_run.link('/etc/nginx/sites-enabled/bar.conf')
 
-        expect(template_foo).to notify('link[enable_server_foo]').to(:create).immediately
+        expect(template_foo).to notify('link[link_server_foo]').to(:create).immediately
         expect(link_foo.to).to eq('/etc/nginx/sites-available/foo.conf')
         ChefSpec::Coverage.cover!(link_foo)
 
-        expect(template_bar).to notify('link[enable_server_bar]').to(:create).immediately
+        expect(template_bar).to notify('link[link_server_bar]').to(:create).immediately
         expect(link_bar.to).to eq('/etc/nginx/sites-available/bar.conf')
         ChefSpec::Coverage.cover!(link_bar)
       end

@@ -1,9 +1,6 @@
 raise Chef::Exceptions::ConfigurationError, 'No configuration for cookbook' if node['nginx']['servers'].empty?
 
-service 'nginx' do
-  supports [:restart]
-  action :nothing
-end
+service 'nginx'
 
 node['nginx']['servers'].each do |server_name, server|
   if (not server.key?('upstreams') or server['upstreams'].empty?) and
@@ -21,20 +18,41 @@ node['nginx']['servers'].each do |server_name, server|
     end
   end
 
-  template "configure_server_#{server_name}" do
+  template "create_server_#{server_name}" do
     source 'nginx.conf.erb'
-    path "/etc/nginx/sites-available/#{server_name}.conf"
+    path "#{node['nginx']['sites_available']}/#{server_name}.conf"
     variables server: server, server_name: server_name
 
-    notifies :create, "link[enable_server_#{server_name}]", :immediately
+    not_if { server['enable'] === false }
+    notifies :create, "link[link_server_#{server_name}]", :immediately
     notifies :restart, 'service[nginx]', :delayed
   end
 
-  link "enable_server_#{server_name}" do
-    target_file "/etc/nginx/sites-enabled/#{server_name}.conf"
-    to "/etc/nginx/sites-available/#{server_name}.conf"
+  link "link_server_#{server_name}" do
+    target_file "#{node['nginx']['sites_enabled']}/#{server_name}.conf"
+    to "#{node['nginx']['sites_available']}/#{server_name}.conf"
     action :nothing
 
+    not_if { node['nginx']['sites_available'] === node['nginx']['sites_enabled'] }
+    notifies :restart, 'service[nginx]', :delayed
+  end
+
+  template "delete_server_#{server_name}" do
+    action :delete
+
+    only_if {
+      server['enable'] === false and
+      node['nginx']['sites_available'] === node['nginx']['sites_enabled']
+    }
+    notifies :restart, 'service[nginx]', :delayed
+  end
+
+  link "unlink_server_#{server_name}" do
+    target_file "#{node['nginx']['sites_enabled']}/#{server_name}.conf"
+    to "#{node['nginx']['sites_available']}/#{server_name}.conf"
+    action :delete
+
+    only_if { server['enable'] === false }
     notifies :restart, 'service[nginx]', :delayed
   end
 end
