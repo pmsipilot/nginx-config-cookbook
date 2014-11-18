@@ -2,23 +2,25 @@ require 'spec_helper'
 
 describe 'nginx-config::default' do
   describe 'Upstreams' do
+    let(:chef_run) do
+      ChefSpec::SoloRunner.new do |node|
+        node.set['nginx'] = {
+            :servers => {
+                :foo => {
+                    :port => 8888,
+                    :upstreams => {}
+                }
+            }
+        }
+      end
+    end
+
     describe 'Single upstream' do
-      let(:chef_run) do
-        ChefSpec::SoloRunner.new do |node|
-          node.set['nginx'] = {
-              :servers => {
-                  :foo => {
-                      :port => 8888,
-                      :upstreams => {
-                          :bar => {
-                              :ip => '10.0.0.1',
-                              :port => 9999
-                          }
-                      }
-                  }
-              }
-          }
-        end.converge(described_recipe)
+      before do
+        chef_run.node.set['nginx']['servers']['foo']['upstreams']['bar'] = {
+            :ip => '10.0.0.1',
+            :port => 9999
+        }
       end
 
       it 'Writes upstream in the server config file' do
@@ -29,31 +31,21 @@ upstream bar {
 
 CONF
 
-        expect(chef_run).to render_file('/etc/nginx/sites-available/foo.conf').with_content(expected)
+        expect(chef_run.converge(described_recipe)).to render_file('/etc/nginx/sites-available/foo.conf').with_content(expected)
       end
     end
 
     describe 'Multiple upstreams' do
-      let(:chef_run) do
-        ChefSpec::SoloRunner.new do |node|
-          node.set['nginx'] = {
-              :servers => {
-                  :foo => {
-                      :port => 8888,
-                      :upstreams => {
-                          :bar => {
-                              :ip => '10.0.0.1',
-                              :port => 9999
-                          },
-                          :baz => {
-                              :ip => '10.0.0.2',
-                              :port => 7777
-                          }
-                      }
-                  }
-              }
-          }
-        end.converge(described_recipe)
+      before do
+        chef_run.node.set['nginx']['servers']['foo']['upstreams']['bar'] = {
+            :ip => '10.0.0.1',
+            :port => 9999
+        }
+
+        chef_run.node.set['nginx']['servers']['foo']['upstreams']['baz'] = {
+            :ip => '10.0.0.2',
+            :port => 7777
+        }
       end
 
       it 'Writes upstreams in the server config file' do
@@ -68,7 +60,7 @@ upstream baz {
 
 CONF
 
-        expect(chef_run).to render_file('/etc/nginx/sites-available/foo.conf').with_content(expected)
+        expect(chef_run.converge(described_recipe)).to render_file('/etc/nginx/sites-available/foo.conf').with_content(expected)
       end
     end
   end
