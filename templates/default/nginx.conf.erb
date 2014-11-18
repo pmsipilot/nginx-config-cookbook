@@ -1,23 +1,21 @@
-<% node['nginx']['servers'].each do |name, server| %>
-<% server['upstreams'].each do |upname, upstream| %>
-upstream <%= upname %> {
-    server <%= upstream['ip'] %>:<%= upstream['port'] %>;
+<% @server['upstreams'].each do |upstream_name, upstream_def| %>
+upstream <%= upstream_name %> {
+    server <%= upstream_def['ip'] %>:<%= upstream_def['port'] %>;
 }
 
-<% end if server['upstreams'] %>
+<% end if @server['upstreams'] %>
 server {
-    listen *:<%= server['port'] %>;
-    server_name <%= name %>;
+    listen *:<%= @server['port'] %>;
+    server_name <%= @server_name %>;
     server_tokens off;
 
-    <% server['locations'].each do |location| %>
-    location <%= location['path'] %> {
-        proxy_pass http://<%= location['upstream'] %><%= location['alias'] %>/;
-        proxy_redirect http://<%= location['upstream'] %><%= location['alias'] %>/ <%= location['alias'] %>/;
+    <% @server['locations'].each do |location_def| %>
+    location <%= location_def['path'] %> {
+        proxy_pass http://<%= location_def['upstream'] %><%= location_def['alias'] %>/;
+        proxy_redirect http://<%= location_def['upstream'] %><%= location_def['alias'] %>/ <%= location_def['alias'] %>/;
         proxy_set_header Host $proxy_host;
         proxy_set_header X-Real-IP $remote_addr;
     }
 
-    <% end if server['locations'] %>
+    <% end if @server['locations'] %>
 }
-<% end %>

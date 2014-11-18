@@ -1,23 +1,31 @@
 require 'spec_helper'
 
 describe 'nginx-config::default' do
-  describe 'Empty servers attribute' do
-    let(:chef_run) { ChefSpec::SoloRunner.new.converge(described_recipe) }
-
-    it 'Creates config file' do
-      expect(chef_run).to render_file('/etc/nginx/sites-available/proxy.conf').with_content('')
+  describe 'With empty servers attribute' do
+    it 'Throws a ConfigurationError with empty attributes' do
+      expect { ChefSpec::SoloRunner.new.converge(described_recipe) }.to raise_error(Chef::Exceptions::ConfigurationError)
     end
 
-    it 'Enables nginx server' do
-      template = chef_run.template('/etc/nginx/sites-available/proxy.conf')
+    it 'Throws a ConfigurationError with empty servers' do
+      chef_run = ChefSpec::SoloRunner.new do |node|
+        node.set['nginx'] = {
+            :servers => {}
+        }
+      end
 
-      expect(template).to notify('link[enable_server]').to(:create).immediately
+      expect { chef_run.converge(described_recipe) }.to raise_error(Chef::Exceptions::ConfigurationError)
     end
 
-    it 'Restarts nginx service' do
-      template = chef_run.template('/etc/nginx/sites-available/proxy.conf')
+    it 'Throws a ConfigurationError with invalid server definition' do
+      chef_run = ChefSpec::SoloRunner.new do |node|
+        node.set['nginx'] = {
+          :servers => {
+              :foo => {}
+          }
+        }
+      end
 
-      expect(template).to notify('service[nginx]').to(:restart).delayed
+      expect { chef_run.converge(described_recipe) }.to raise_error(Chef::Exceptions::ConfigurationError)
     end
   end
 end
