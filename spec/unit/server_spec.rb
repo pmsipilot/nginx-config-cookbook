@@ -15,7 +15,6 @@ describe 'nginx-config::default' do
     describe 'Single server' do
       before do
         chef_run.node.set['nginx']['servers']['foo'] = {
-            :port => 8888,
             :root => '/var/www'
         }
       end
@@ -23,7 +22,7 @@ describe 'nginx-config::default' do
       it 'Creates a config file with the server name as filename' do
         expected = <<CONF
 server {
-    listen *:8888;
+    listen *:80;
     server_name foo;
     server_tokens off;
     root /var/www;
@@ -55,7 +54,6 @@ CONF
     describe 'Multiple servers' do
       before do
         chef_run.node.set['nginx']['servers']['foo'] = {
-            :port => 8888,
             :root => '/var/www/foo'
         }
 
@@ -71,7 +69,7 @@ CONF
 
         expected_foo = <<CONF
 server {
-    listen *:8888;
+    listen *:80;
     server_name foo;
     server_tokens off;
     root /var/www/foo;

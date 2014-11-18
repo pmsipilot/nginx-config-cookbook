@@ -20,15 +20,14 @@ describe 'nginx-config::default' do
     describe 'Single upstream' do
       before do
         chef_run.node.set['nginx']['servers']['foo']['upstreams']['bar'] = {
-            :ip => '10.0.0.1',
-            :port => 9999
+            :ip => '10.0.0.1'
         }
       end
 
       it 'Writes upstream in the server config file' do
         expected = <<CONF
 upstream bar {
-    server 10.0.0.1:9999;
+    server 10.0.0.1:80;
 }
 
 CONF
@@ -40,8 +39,7 @@ CONF
     describe 'Multiple upstreams' do
       before do
         chef_run.node.set['nginx']['servers']['foo']['upstreams']['bar'] = {
-            :ip => '10.0.0.1',
-            :port => 9999
+            :ip => '10.0.0.1'
         }
 
         chef_run.node.set['nginx']['servers']['foo']['upstreams']['baz'] = {
@@ -53,7 +51,7 @@ CONF
       it 'Writes upstreams in the server config file' do
         expected = <<CONF
 upstream bar {
-    server 10.0.0.1:9999;
+    server 10.0.0.1:80;
 }
 
 upstream baz {
