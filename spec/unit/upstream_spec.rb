@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'nginx-config::default' do
-  describe 'Server with upstream(s)' do
+  describe 'Upstreams' do
     describe 'Single upstream' do
       let(:chef_run) do
         ChefSpec::SoloRunner.new do |node|
@@ -21,34 +21,15 @@ describe 'nginx-config::default' do
         end.converge(described_recipe)
       end
 
-      it 'Creates config file' do
+      it 'Writes upstream in the server config file' do
         expected = <<CONF
 upstream bar {
     server 10.0.0.1:9999;
 }
 
-server {
-    listen *:8888;
-    server_name foo;
-    server_tokens off;
-
-
-}
 CONF
 
         expect(chef_run).to render_file('/etc/nginx/sites-available/foo.conf').with_content(expected)
-      end
-
-      it 'Enables nginx server' do
-        template = chef_run.template('/etc/nginx/sites-available/foo.conf')
-
-        expect(template).to notify('link[enable_server]').to(:create).immediately
-      end
-
-      it 'Restarts nginx service' do
-        template = chef_run.template('/etc/nginx/sites-available/foo.conf')
-
-        expect(template).to notify('service[nginx]').to(:restart).delayed
       end
     end
 
@@ -75,7 +56,7 @@ CONF
         end.converge(described_recipe)
       end
 
-      it 'Creates config file' do
+      it 'Writes upstreams in the server config file' do
         expected = <<CONF
 upstream bar {
     server 10.0.0.1:9999;
@@ -85,28 +66,9 @@ upstream baz {
     server 10.0.0.2:7777;
 }
 
-server {
-    listen *:8888;
-    server_name foo;
-    server_tokens off;
-
-
-}
 CONF
 
         expect(chef_run).to render_file('/etc/nginx/sites-available/foo.conf').with_content(expected)
-      end
-
-      it 'Enables nginx server' do
-        template = chef_run.template('/etc/nginx/sites-available/foo.conf')
-
-        expect(template).to notify('link[enable_server]').to(:create).immediately
-      end
-
-      it 'Restarts nginx service' do
-        template = chef_run.template('/etc/nginx/sites-available/foo.conf')
-
-        expect(template).to notify('service[nginx]').to(:restart).delayed
       end
     end
   end

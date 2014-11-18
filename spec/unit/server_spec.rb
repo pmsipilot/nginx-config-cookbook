@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'nginx-config::default' do
-  describe 'Simple server' do
+  describe 'Servers' do
     let(:chef_run) do
       ChefSpec::SoloRunner.new do |node|
         node.set['nginx'] = {
