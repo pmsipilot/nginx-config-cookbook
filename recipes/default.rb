@@ -3,20 +3,7 @@ raise Chef::Exceptions::ConfigurationError, 'No configuration for cookbook' if n
 service 'nginx'
 
 node['nginx']['servers'].each do |server_name, server|
-  if (not server.key?('upstreams') or server['upstreams'].empty?) and
-     (not server.key?('locations') or server['locations'].empty?) and
-     (not server.key?('root') or server['root'].empty?)
-    raise Chef::Exceptions::ConfigurationError, 'Invalid server configuration'
-  end
-
-  if server.key?('locations') and not server['locations'].empty?
-    server['locations'].each do |location|
-      has_path = (location.key?('path') and not location['path'].empty?)
-      has_upstream = (location.key?('upstream') and not location['upstream'].empty?)
-
-      raise Chef::Exceptions::ConfigurationError, 'Invalid location configuration' unless has_path and has_upstream
-    end
-  end
+  server = PMSIpilot::NginxConfig::Server.normalize!(server)
 
   template "create_server_#{server_name}" do
     source 'nginx.conf.erb'
@@ -33,17 +20,19 @@ node['nginx']['servers'].each do |server_name, server|
     to "#{node['nginx']['sites_available']}/#{server_name}.conf"
     action :nothing
 
-    not_if { node['nginx']['sites_available'] === node['nginx']['sites_enabled'] }
+    not_if do
+      node['nginx']['sites_available'] === node['nginx']['sites_enabled']
+    end
     notifies :restart, 'service[nginx]', :delayed
   end
 
   template "delete_server_#{server_name}" do
     action :delete
 
-    only_if {
+    only_if do
       server['enable'] === false and
       node['nginx']['sites_available'] === node['nginx']['sites_enabled']
-    }
+    end
     notifies :restart, 'service[nginx]', :delayed
   end
 
