@@ -26,8 +26,9 @@ node['nginx']['servers'].each do |server_name, server|
     notifies :restart, 'service[nginx]', :delayed
   end
 
-  template "delete_server_#{server_name}" do
+  file "delete_server_#{server_name}" do
     action :delete
+    path "#{node['nginx']['sites_available']}/#{server_name}.conf"
 
     only_if do
       server['enable'] === false and
