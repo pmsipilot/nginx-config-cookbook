@@ -16,7 +16,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.berkshelf.berksfile_path = 'Berksfile'
 
   config.vm.provider 'virtualbox' do |vbox|
-    vbox.customize ['modifyvm', :id, '--memory', 4096]
+    vbox.customize ['modifyvm', :id, '--memory', 1024]
     vbox.customize ['modifyvm', :id, '--cpus', 2]
   end
 
