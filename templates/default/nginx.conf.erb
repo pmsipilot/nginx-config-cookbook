@@ -12,8 +12,8 @@ server {
 
 <% @server['locations'].each do |location_def| %>
     location <%= location_def['path'] %> {
-        proxy_pass http://<%= location_def['upstream'] %><%= location_def['alias'] %>/;
-        proxy_redirect http://<%= location_def['upstream'] %><%= location_def['alias'] %>/ <%= location_def['alias'] %>/;
+        proxy_pass <%= location_def['protocol'] %>://<%= location_def['upstream'] %><%= location_def['alias'] %>/;
+        proxy_redirect <%= location_def['protocol'] %>://<%= location_def['upstream'] %><%= location_def['alias'] %>/ <%= location_def['alias'] %>/;
         proxy_set_header Host $proxy_host;
         proxy_set_header X-Real-IP $remote_addr;
     }
