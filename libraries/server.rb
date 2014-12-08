@@ -38,6 +38,15 @@ module PMSIpilot
 
         normalized
       end
+
+      def self.should_delete?(server, node)
+        puts server['enable'] === false && node['nginx']['sites_available'] === node['nginx']['sites_enabled']
+        server['enable'] === false && node['nginx']['sites_available'] === node['nginx']['sites_enabled']
+      end
+
+      def self.should_unlink?(server, node)
+        server['enable'] === false && (not node['nginx']['sites_available'] === node['nginx']['sites_enabled'])
+      end
     end
   end
 end
