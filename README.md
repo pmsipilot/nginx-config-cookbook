@@ -50,3 +50,17 @@ Include `nginx-config` in your node's `run_list`:
   ]
 }
 ```
+
+### nginx-config::clean
+
+This recipe will let you disable server configurations. Every server marked with `enable => false`
+will be disabled (i.e. configuration file or symlink deleted):
+
+```json
+{
+  "run_list": [
+    "recipe[nginx-config]",
+    "recipe[nginx-config::clean]"
+  ]
+}
+```
