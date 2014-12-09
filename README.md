@@ -1,4 +1,4 @@
-# nginx-config-cookbook
+# nginx-config-cookbook [![Build Status](https://travis-ci.org/pmsipilot/nginx-config-cookbook.svg?branch=master)](https://travis-ci.org/pmsipilot/nginx-config-cookbook)
 
 Configures nginx
 
@@ -47,6 +47,20 @@ Include `nginx-config` in your node's `run_list`:
 {
   "run_list": [
     "recipe[nginx-config]"
+  ]
+}
+```
+
+### nginx-config::clean
+
+This recipe will let you disable server configurations. Every server marked with `enable => false`
+will be disabled (i.e. configuration file or symlink deleted):
+
+```json
+{
+  "run_list": [
+    "recipe[nginx-config]",
+    "recipe[nginx-config::clean]"
   ]
 }
 ```

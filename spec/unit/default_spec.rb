@@ -51,6 +51,20 @@ describe 'nginx-config::default' do
       expect(node['nginx']['sites_enabled']).to eq('/etc/nginx/conf.d')
     end
 
+    describe 'Creates directories' do
+      it 'Configuration directory' do
+        expect(chef_run.converge(described_recipe)).to create_directory('/etc/nginx/conf.d')
+      end
+
+      it 'Configuration directories' do
+        chef_run.node.set['nginx']['sites_available'] = '/etc/nginx/sites-available'
+        chef_run.node.set['nginx']['sites_enabled'] = '/etc/nginx/sites-enabled'
+
+        expect(chef_run.converge(described_recipe)).to create_directory('/etc/nginx/sites-available')
+        expect(chef_run.converge(described_recipe)).to create_directory('/etc/nginx/sites-enabled')
+      end
+    end
+
     it 'Declares nginx service and does nothing' do
       service = chef_run.converge(described_recipe).service('nginx')
 
@@ -65,23 +79,6 @@ describe 'nginx-config::default' do
 
     it 'Should not create symlink if enabled/available directories are the same' do
       expect(chef_run.converge(described_recipe)).to_not create_link('/etc/nginx/conf.d/foo.conf')
-    end
-
-    describe 'When server is disabled' do
-      it 'Should delete config file' do
-        chef_run.node.set['nginx']['servers']['foo']['enable'] = false
-
-        expect(chef_run.converge(described_recipe)).to delete_template('delete_server_foo')
-      end
-
-      it 'Should delete symlink' do
-        chef_run.node.set['nginx']['sites_available'] = '/etc/nginx/sites-available'
-        chef_run.node.set['nginx']['sites_enabled'] = '/etc/nginx/sites-enabled'
-        chef_run.node.set['nginx']['servers']['foo']['enable'] = false
-
-        expect(chef_run.converge(described_recipe)).to_not delete_template('delete_server_foo')
-        expect(chef_run.converge(described_recipe)).to delete_link('unlink_server_foo')
-      end
     end
   end
 end
