@@ -1,4 +1,4 @@
-# nginx-config-cookbook
+# nginx-config-cookbook [![Build Status](https://travis-ci.org/pmsipilot/nginx-config-cookbook.svg?branch=master)](https://travis-ci.org/pmsipilot/nginx-config-cookbook)
 
 Configures nginx
 
