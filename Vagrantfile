@@ -15,6 +15,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.berkshelf.enabled = true
   config.berkshelf.berksfile_path = 'Berksfile'
 
+  config.vm.network "private_network", ip: "192.168.50.4"
   config.vm.provider 'virtualbox' do |vbox|
     vbox.customize ['modifyvm', :id, '--memory', 1024]
     vbox.customize ['modifyvm', :id, '--cpus', 2]
@@ -25,7 +26,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       nginx: {
         :servers => {
           :'sugar.pmsipilot.com' => {
-            :port => 8888,
+            :port => 80,
             :upstreams => {
               :sugar => {
                 :ip => 'sugar',
@@ -36,14 +37,64 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
               {
                 :path => '/',
                 :alias => '/sugar',
+                :protocol => 'http',
                 :upstream => :sugar
+
               }
             ]
+          },
+          :'demobi.pmsipilot.com' => {
+            :port => 80,
+            :upstreams => {
+              :demobi => {
+                :ip => 'srv-demo-pbi1',
+                :port => 443
+
+              }
+            },
+            :locations => [
+              {
+
+                :path => '/',
+                :alias => '/',
+                :protocol => 'https',
+                :upstream => 'srv-demo-pbi1'
+
+
+              }
+
+            ]
+
+
+
+          },
+          :'demo.pmsipilot.com' => {
+
+            :port => 80,
+            :upstreams => {
+              :demo => {
+              :ip => 'srv-demo',
+              :port => 80
+
+
+           }
+
+         },
+
+
+        :locations => [
+
+          {
+          :path => '/',
+          :protocol => 'http',
+          :upstream => 'srv-demo'
           }
-        }
+
+        ]
+      }
       }
     }
-
+  }
     chef.run_list = %w(
       recipe[nginx]
       recipe[nginx-config]
