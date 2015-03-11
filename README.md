@@ -21,6 +21,7 @@ Configures nginx
 | `enable`    | Boolean    | `true`  | Enable or disable the server                          |
 | `upstreams` | Hash       | `{}`    | A list of [upstreams](#upstreams) with names as key   |
 | `locations` | Array      | `[]`    | A list of [locations](#locations) definitions         |
+| `params`    | Hash       | `{}`    | A list of extra parameters for server context         |
 
 ### Upstreams
 
@@ -36,6 +37,7 @@ Configures nginx
 | `path`      | String     | `nil`   | The location path                                     |
 | `alias`     | String     | `nil`   | The location alias                                    |
 | `upstream`  | String     | `nil`   | Name of an existing [upstream](#upstreams)            |
+| `params`    | Hash       | `{}`    | A list of extra parameters for location context       |
 
 ## Usage
 
