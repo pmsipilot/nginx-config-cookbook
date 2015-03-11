@@ -9,6 +9,9 @@ server {
     server_name <%= @server_name %>;
     server_tokens off;
 <% if @server['root'] %>    root <%= @server['root'] %>;<% end %>
+   <% @server['params'].each do |param_key, param_value| %> 
+    <%= param_key %> <%= param_value %>;
+   <% end if @server['params'] %>
 
 <% @server['locations'].each do |location_def| %>
     location <%= location_def['path'] %> {
@@ -16,6 +19,9 @@ server {
         proxy_redirect http://<%= location_def['upstream'] %><%= location_def['alias'] %>/ <%= location_def['alias'] %>/;
         proxy_set_header Host $proxy_host;
         proxy_set_header X-Real-IP $remote_addr;
+   	<% location_def['params'].each do |param_key, param_value| %> 
+        <%= param_key %> <%= param_value %>;
+   	<% end if location_def['params'] %>
     }
 
 <% end if @server['locations'] %>

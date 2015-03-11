@@ -27,7 +27,9 @@ module PMSIpilot
         normalized['upstreams'] ||= []
         normalized['locations'] = server['locations'].dup if server.key?('locations')
         normalized['locations'] ||= []
-
+        normalized['params'] = server['params'].dup if server.key?('params')
+        normalized['params'] ||= {}
+        
         normalized['upstreams'].dup.each do |upstream_name, upstream|
           normalized['upstreams'][upstream_name] = PMSIpilot::NginxConfig::Upstream.normalize!(upstream)
         end
