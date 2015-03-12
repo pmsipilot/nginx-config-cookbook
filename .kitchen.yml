@@ -1,0 +1,82 @@
+---
+driver:
+  name: vagrant
+  customize:
+    memory: 1024
+    cpus: 2
+
+
+
+
+provisioner:
+  name: chef_solo
+
+platforms:
+  - name: centos-6.5
+
+suites:
+  - name: default
+    run_list:
+      - recipe[nginx]
+      - recipe[nginx-config]
+
+    attributes: {
+      nginx: {
+        servers: {
+          files.test: {
+            port: 80,
+            root: '/usr/share/nginx/html'
+          },
+          upstream.test: {
+            port: 80,
+            upstreams: {
+              files: {
+                ip: 'localhost',
+                port: 80
+                }
+            },
+            locations: [
+              {
+                path: '/test',
+                alias: '/',
+                upstream: 'files'
+              }
+            ]
+          }
+        }
+      }
+   }
+
+  - name: clean
+    run_list:
+      - recipe[nginx]
+      - recipe[nginx-config]
+      - recipe[nginx-config::clean]
+
+    attributes: {
+      nginx: {
+        servers: {
+          files.test: {
+            port: 80,
+            root: '/usr/share/nginx/html'
+          },
+          upstream.test: {
+            port: 80,
+            enable: false,
+            upstreams: {
+              files: {
+                ip: 'localhost',
+                port: 80
+              }
+            },
+            locations: [
+              {
+                  path: '/test',
+                  alias: '/',
+                  upstream: 'files'
+              }
+            ]
+           }
+         }
+       }
+     }

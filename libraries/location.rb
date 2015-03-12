@@ -18,6 +18,7 @@ module PMSIpilot
       end
 
       def self.normalize!(location)
+        location['params'] ||= {}
         raise_if_invalid!(location).dup
       end
     end
