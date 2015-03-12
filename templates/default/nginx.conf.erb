@@ -17,7 +17,6 @@ server {
     location <%= location_def['path'] %> {
         proxy_pass http://<%= location_def['upstream'] %><%= location_def['alias'] %>/;
         proxy_redirect http://<%= location_def['upstream'] %><%= location_def['alias'] %>/ <%= location_def['alias'] %>/;
-        #proxy_set_header Host $proxy_host; ## Should now be set manually through params (chef).
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $remote_addr;
    	<% location_def['params'].each do |param_key, param_value| %> 
