@@ -50,8 +50,8 @@ server {
     location / {
         proxy_pass http://bar/;
         proxy_redirect http://bar/ /;
-        proxy_set_header Host $proxy_host;
         proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
     }
 
 }
@@ -85,15 +85,15 @@ server {
     location / {
         proxy_pass http://bar/;
         proxy_redirect http://bar/ /;
-        proxy_set_header Host $proxy_host;
         proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
     }
 
     location /baz {
         proxy_pass http://baz/;
         proxy_redirect http://baz/ /;
-        proxy_set_header Host $proxy_host;
         proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
     }
 
 }
